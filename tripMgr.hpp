@@ -3,22 +3,28 @@
 #include "driverMgr.hpp"
 #include "tripMetaData.hpp"
 #include "trip.hpp"
-#include "mutex"
 #include "strategyMgr.hpp"
+#include <mutex>
+#include <memory>
+#include <atomic> // Added for atomic operation (increment) --> nextTripId static class private member
+
+using namespace std;
 
 class TripMgr {
-	static TripMgr* tripMgrInstance;
-	static mutex mtx;
-	TripMgr(){
-		riderMgr = RiderMgr::getRiderMgr();
-		driverMgr = DriverMgr::getDriverMgr();
-	}
-	RiderMgr* riderMgr;
-	DriverMgr* driverMgr;
-	unordered_map<int, TripMetaData*> tripsMetaDataInfo; 
-	unordered_map<int, Trip*> tripsInfo;
+    static shared_ptr<TripMgr> tripMgrInstance;
+    static mutex mtx;
+    static atomic<int> nextTripId; // Added atomic variable for thread-safe trip ID generation
+    TripMgr(){
+        riderMgr = RiderMgr::getRiderMgr();
+        driverMgr = DriverMgr::getDriverMgr();
+    }
+    shared_ptr<RiderMgr> riderMgr;
+    shared_ptr<DriverMgr> driverMgr;
+    unordered_map<int, shared_ptr<TripMetaData>> tripsMetaDataInfo;
+    unordered_map<int, shared_ptr<Trip>> tripsInfo;
 public:
-	static TripMgr* getTripMgr();
-	void CreateTrip(Rider* pRider, Location* pSrcLoc, Location* pDstLoc);
-	unordered_map<int, Trip*> getTripsMap();
+    static shared_ptr<TripMgr> getTripMgr();
+    void CreateTrip(shared_ptr<Rider> pRider, shared_ptr<Location> pSrcLoc, shared_ptr<Location> pDstLoc);
+    unordered_map<int, shared_ptr<Trip>> getTripsMap();
+    virtual ~TripMgr() = default; // Added virtual destructor
 };
