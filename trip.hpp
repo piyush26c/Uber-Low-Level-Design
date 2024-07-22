@@ -5,34 +5,32 @@
 #include "driverMatchingStrategy.hpp"
 
 class Trip {
-	Rider* rider;
-	Driver* driver;
-	Location* srcloc;
-	Location* dstLoc;
-	TRIP_STATUS status;
-	int tripId;
-	double price;
-	PricingStrategy* pricingStrategy;
-	DriverMatchingStrategy* driverMatchingStrategy;
+    shared_ptr<Rider> rider;
+    shared_ptr<Driver> driver;
+    shared_ptr<Location> srcloc;
+    shared_ptr<Location> dstLoc;
+    TRIP_STATUS status;
+    int tripId;
+    double price;
+    shared_ptr<PricingStrategy> pricingStrategy;
+    shared_ptr<DriverMatchingStrategy> driverMatchingStrategy;
 public:
-	Trip(Rider* pRider, Driver* pDriver, Location* pSrcLoc, Location* pDstLoc, double pPrice,
-		PricingStrategy* pPricingStrategy, DriverMatchingStrategy* pDriverMatchingStrategy) : 
-		rider(pRider), driver(pDriver), srcloc(pSrcLoc), dstLoc(pDstLoc), price(pPrice),
-		pricingStrategy(pPricingStrategy), driverMatchingStrategy(pDriverMatchingStrategy) {
-		status = TRIP_STATUS::DRIVER_ON_THE_WAY;
-		//This is not threadsafe and is just for demo purposes
-		tripId = nextTripId;
-		nextTripId++;
-	}
-	int getTripId() {
-		return tripId;
-	}
-	void displayTripDetails() {
-		cout << endl;
-		cout << "Trip id - " << tripId << endl;
-		cout << "Rider - " << rider->getRiderName() << endl;
-		cout << "Driver - " << driver->getDriverName() << endl;
-		cout << "Price - " << price << endl;
-		cout << "Locations - " <<srcloc->latitude<<","<<srcloc->longitude<<" and "<<dstLoc->latitude<<","<<dstLoc->longitude << endl;
-	}
+    Trip(int id, shared_ptr<Rider> pRider, shared_ptr<Driver> pDriver, shared_ptr<Location> pSrcLoc, shared_ptr<Location> pDstLoc, double pPrice,
+         shared_ptr<PricingStrategy> pPricingStrategy, shared_ptr<DriverMatchingStrategy> pDriverMatchingStrategy) :
+            tripId(id), rider(std::move(pRider)), driver(std::move(pDriver)), srcloc(std::move(pSrcLoc)), dstLoc(std::move(pDstLoc)), price(pPrice),
+            pricingStrategy(std::move(pPricingStrategy)), driverMatchingStrategy(std::move(pDriverMatchingStrategy)), status(TRIP_STATUS::DRIVER_ON_THE_WAY) {}
+
+    int getTripId() const {
+        return tripId;
+    }
+    void displayTripDetails() const {
+        cout << endl;
+        cout << "Trip id - " << tripId << endl;
+        cout << "Rider - " << rider->getRiderName() << endl;
+        cout << "Driver - " << driver->getDriverName() << endl;
+        cout << "Price - " << price << endl;
+        cout << "Locations - " << srcloc->latitude << "," << srcloc->longitude << " and " << dstLoc->latitude << "," << dstLoc->longitude << endl;
+    }
+
+    virtual ~Trip() = default; // Added virtual destructor
 };
