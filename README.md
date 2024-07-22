@@ -3,4 +3,6 @@
 Class Diagram 
 <br>
 
-![Class Diagram](UberSystemDesign.svg)
+<a href="class-diagram.svg" target="_blank">
+  <img src="UberSystemDesign.svg" alt="Class Diagram" width="1500" height="600">
+</a>
