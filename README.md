@@ -3,6 +3,20 @@
 Class Diagram 
 <br>
 
-<a href="class-diagram.svg" target="_blank">
-  <img src="class-diagram.svg" alt="Class Diagram" width="1500" height="600">
-</a>
+<style>
+  .diagram-container {
+    display: flex;
+    justify-content: center;
+  }
+  .diagram {
+    width: 100%;
+    max-width: 1200px;
+    height: auto;
+  }
+</style>
+
+<div class="diagram-container">
+  <a href="class-diagram.svg" target="_blank">
+    <img src="class-diagram.svg" alt="Class Diagram" class="diagram">
+  </a>
+</div>
