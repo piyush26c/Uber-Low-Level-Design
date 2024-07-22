@@ -80,7 +80,9 @@ In this design, we have focused on creating a robust and maintainable codebase b
 ## Badges
 
 ![C++](https://img.shields.io/badge/C++-blue.svg?style=flat&logo=c%2B%2B)
-![ViewCount](https://views.whatilearened.today/views/github/piyush26c/Uber-Low-Level-Design.svg) ![GitHub](https://img.shields.io/github/last-commit/piyush26c/Uber-Low-Level-Design)
+![CMake Badge](https://img.shields.io/badge/CMake-064F8C?logo=cmake&logoColor=fff&style=flat-square)
+![ViewCount](https://views.whatilearened.today/views/github/piyush26c/Uber-Low-Level-Design.svg) ![GitHub watchers](https://img.shields.io/github/watchers/piyush26c/Uber-Low-Level-Design?style=flat)
+![GitHub](https://img.shields.io/github/last-commit/piyush26c/Uber-Low-Level-Design?style=flat)
 ## Authors
 
 - [Piyush Rajendra Chaudhari](https://github.com/piyush26c)
