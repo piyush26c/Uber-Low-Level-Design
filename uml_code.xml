@@ -1,0 +1,176 @@
+@startuml
+
+interface PricingStrategy {
+    + {abstract} calculatePrice(const shared_ptr<TripMetaData>& pTripMetaData): double
+    +~ {abstract} PricingStrategy()
+}
+
+class DefaultPricingStrategy {
+    +calculatePrice(const shared_ptr<TripMetaData>& pTripMetaData): double
+    +~ {abstract} DefaultPricingStrategy()
+}
+DefaultPricingStrategy -|> PricingStrategy
+
+class RatingBasedPricingStrategy {
+    +calculatePrice(const shared_ptr<TripMetaData>& pTripMetaData): double
+    +~ {abstract} RatingBasedPricingStrategy()
+}
+RatingBasedPricingStrategy -|> PricingStrategy
+
+interface DriverMatchingStrategy {
+    + {abstract} matchDriver(shared_ptr<TripMetaData> pTripMetaData): shared_ptr<Driver>
+    + {abstract} DriverMatchingStrategy()
+}
+
+class LeastTimeBasedMatchingStrategy {
+    +matchDriver(shared_ptr<TripMetaData> pTripMetaData): shared_ptr<Driver>
+    +~ {abstract} LeastTimeBasedMatchingStrategy()
+}
+LeastTimeBasedMatchingStrategy -|> DriverMatchingStrategy
+
+class Util {
+    +{static} ratingToString(RATING pRating): string
+    +{static} isHighRating(RATING pRating): bool
+}
+
+enum RATING {
+    UNASSIGNED
+    ONE_STAR
+    TWO_STARS
+    THREE_STARS
+    FOUR_STARS
+    FIVE_STARS
+}
+
+enum TRIP_STATUS {
+    UNASSIGNED
+    DRIVER_ON_THE_WAY
+    DRIVER_ARRIVED
+    STARTED
+    PAUSED
+    CANCELLED
+    ENDED
+}
+
+class Location {
+    +double latitude
+    +double longitude
+    +Location(double pLatitude, double pLongitude)
+    +~ {abstract} Location()
+}
+
+class TripMetaData {
+    -shared_ptr<Location> srcLoc
+    -shared_ptr<Location> dstLoc
+    -RATING riderRating
+    -RATING driverRating
+    +TripMetaData(shared_ptr<Location> pSrcLoc, shared_ptr<Location> pDstLoc, RATING pRiderRating)
+    +getRiderRating(): RATING
+    +getDriverRating(): RATING
+    +setDriverRating(RATING pDriverRating)
+    +~ {abstract} TripMetaData()
+}
+
+class Driver {
+    -string name
+    -bool avail
+    -RATING rating
+    +Driver(string pName, RATING pRating)
+    +updateAvail(bool pAvail)
+    +getDriverName(): const string&
+    +getRating(): RATING
+    +~ {abstract} Driver()
+}
+
+class Rider {
+    -string name
+    -RATING rating
+    +Rider(string pName, RATING pRating)
+    +getRiderName(): const string&
+    +getRating(): RATING
+    +~ {abstract} Rider()
+}
+
+class Trip {
+    -shared_ptr<Rider> rider
+    -shared_ptr<Driver> driver
+    -shared_ptr<Location> srcloc
+    -shared_ptr<Location> dstLoc
+    -TRIP_STATUS status
+    -int tripId
+    -double price
+    -shared_ptr<PricingStrategy> pricingStrategy
+    -shared_ptr<DriverMatchingStrategy> driverMatchingStrategy
+    +Trip(int id, shared_ptr<Rider> pRider, shared_ptr<Driver> pDriver, shared_ptr<Location> pSrcLoc, shared_ptr<Location> pDstLoc, double pPrice, shared_ptr<PricingStrategy> pPricingStrategy, shared_ptr<DriverMatchingStrategy> pDriverMatchingStrategy)
+    +getTripId(): int
+    +displayTripDetails() const
+    +~ {abstract} Trip()
+}
+
+class DriverMgr {
+    -unordered_map<string, shared_ptr<Driver>> driversMap
+    +DriverMgr()
+    +addDriver(const string& pDriverName, shared_ptr<Driver> pDriver)
+    +getDriver(const string& pDriverName): shared_ptr<Driver>
+    +getDriversMap(): unordered_map<string, shared_ptr<Driver>>
+    +{static} getDriverMgr(): shared_ptr<DriverMgr>
+    +~ {abstract} DriverMgr()
+}
+
+class RiderMgr {
+    -unordered_map<string, shared_ptr<Rider>> ridersMap
+    +RiderMgr()
+    +addRider(const string& pRiderName, shared_ptr<Rider> pRider)
+    +getRider(const string& pRiderName): shared_ptr<Rider>
+    +{static} getRiderMgr(): shared_ptr<RiderMgr>
+    +~ {abstract} RiderMgr()
+}
+
+class StrategyMgr {
+    +determinePricingStrategy(const shared_ptr<TripMetaData>& metaData): shared_ptr<PricingStrategy>
+    +determineMatchingStrategy(const shared_ptr<TripMetaData>& metaData): shared_ptr<DriverMatchingStrategy>
+    +{static} getStrategyMgr(): shared_ptr<StrategyMgr>
+    +~ {abstract} StrategyMgr()
+}
+
+class TripMgr {
+    -unordered_map<int, shared_ptr<TripMetaData>> tripsMetaDataInfo
+    -unordered_map<int, shared_ptr<Trip>> tripsInfo
+    -shared_ptr<RiderMgr> riderMgr
+    -shared_ptr<DriverMgr> driverMgr
+    -{static} atomic<int> nextTripId
+    +TripMgr()
+    +CreateTrip(shared_ptr<Rider> pRider, shared_ptr<Location> pSrcLoc, shared_ptr<Location> pDstLoc)
+    +getTripsMap(): unordered_map<int, shared_ptr<Trip>>
+    +{static} getTripMgr(): shared_ptr<TripMgr>
+    +~ {abstract}TripMgr()
+}
+
+DriverMgr *-- Driver : contains >
+RiderMgr *-- Rider : contains >
+TripMgr *-- Trip : contains >
+TripMgr *-- TripMetaData : contains >
+TripMgr o-- RiderMgr : uses >
+TripMgr o-- DriverMgr : uses >
+StrategyMgr *-- PricingStrategy : determines >
+StrategyMgr *-- DriverMatchingStrategy : determines >
+PricingStrategy <|.. DefaultPricingStrategy
+PricingStrategy <|.. RatingBasedPricingStrategy
+DriverMatchingStrategy <|.. LeastTimeBasedMatchingStrategy
+Trip o-- Rider : composed of >
+Trip o-- Driver : composed of >
+Trip o-- Location : composed of >
+Trip o-- PricingStrategy : uses >
+Trip o-- DriverMatchingStrategy : uses >
+TripMetaData o-- Location : contains >
+TripMetaData *-- RATING : contains >
+note right of Util
+  This class is a part of file "common.hpp".
+end note
+note left of TRIP_STATUS
+  This class is a part of file "common.hpp".
+end note
+note left of RATING
+  This class is a part of file "common.hpp".
+end note
+@enduml
