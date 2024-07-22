@@ -1,26 +1,25 @@
 #include "driverMgr.hpp"
 
-DriverMgr* DriverMgr::driverMgrInstance = nullptr;
+// Used shared_ptr for automatic memory management
+shared_ptr<DriverMgr> DriverMgr::driverMgrInstance = nullptr;
 mutex DriverMgr::mtx;
 
-DriverMgr* DriverMgr::getDriverMgr() {
-	if (driverMgrInstance == nullptr) {
-		mtx.lock();
-		if (driverMgrInstance == nullptr) {
-			driverMgrInstance = new DriverMgr();
-		}
-		mtx.unlock();
-	}
-	return driverMgrInstance;
+shared_ptr<DriverMgr> DriverMgr::getDriverMgr() {
+    lock_guard<mutex> lock(mtx); // Used lock_guard for RAII (Resource Allocation Is Initialization) in C++
+    if (!driverMgrInstance) {
+        driverMgrInstance = shared_ptr<DriverMgr>(new DriverMgr());
+    }
+    return driverMgrInstance;
 }
 
-void DriverMgr::addDriver(string pDriverName, Driver * pDriver) {
-	driversMap[pDriverName] = pDriver;
-}
-Driver* DriverMgr::getDriver(string pDriverName) {
-	return driversMap[pDriverName];
+void DriverMgr::addDriver(const string& pDriverName, shared_ptr<Driver> pDriver) {
+    driversMap[pDriverName] = std::move(pDriver);
 }
 
-unordered_map<string, Driver*> DriverMgr::getDriversMap() {
-	return driversMap;
+shared_ptr<Driver> DriverMgr::getDriver(const string& pDriverName) {
+    return driversMap[pDriverName];
+}
+
+unordered_map<string, shared_ptr<Driver>> DriverMgr::getDriversMap() {
+    return driversMap;
 }
