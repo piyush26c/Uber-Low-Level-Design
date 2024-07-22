@@ -4,4 +4,4 @@ Class Diagram
 <br>
 
 
-![your-UML-diagram-name](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/piyush26c/Uber-Low-Level-Design/main/class-diagram.iuml)
+![your-UML-diagram-name](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/piyush26c/Uber-Low-Level-Design/main/class-diagram.puml)
