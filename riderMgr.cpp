@@ -1,21 +1,19 @@
 #include "riderMgr.hpp"
-RiderMgr* RiderMgr::riderMgrInstance = nullptr;
+shared_ptr<RiderMgr> RiderMgr::riderMgrInstance = nullptr;
 mutex RiderMgr::mtx;
 
-RiderMgr* RiderMgr::getRiderMgr() {
-	if (riderMgrInstance == nullptr) {
-		mtx.lock();
-		if (riderMgrInstance == nullptr) {
-			riderMgrInstance = new RiderMgr();
-		}
-		mtx.unlock();
-	}
-	return riderMgrInstance;
+shared_ptr<RiderMgr> RiderMgr::getRiderMgr() {
+    lock_guard<mutex> lock(mtx); // Used lock_guard for RAII
+    if (!riderMgrInstance) {
+        riderMgrInstance = shared_ptr<RiderMgr>(new RiderMgr());
+    }
+    return riderMgrInstance;
 }
 
-void RiderMgr::addRider(string pRiderName, Rider* pRider) {
-	ridersMap[pRiderName] = pRider; 
+void RiderMgr::addRider(const string& pRiderName, shared_ptr<Rider> pRider) {
+    ridersMap[pRiderName] = std::move(pRider);
 }
-Rider* RiderMgr::getRider(string pRiderName) {
-	return ridersMap[pRiderName];
+
+shared_ptr<Rider> RiderMgr::getRider(const string& pRiderName) {
+    return ridersMap[pRiderName];
 }
