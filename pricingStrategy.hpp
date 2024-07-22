@@ -3,5 +3,6 @@
 
 class PricingStrategy {
 public:
-	virtual double calculatePrice(TripMetaData* pTripMetaData) = 0;
+    virtual double calculatePrice(const shared_ptr<TripMetaData>& pTripMetaData) const = 0;
+    virtual ~PricingStrategy() = default; // Added virtual destructor for proper cleanup
 };
