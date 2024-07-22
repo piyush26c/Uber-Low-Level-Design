@@ -1,29 +1,28 @@
 #pragma once
-#include "rider.hpp"
-#include "driver.hpp"
+#include "location.hpp"
+#include "common.hpp"
 
-//This class basically has all the info that will be used by strategy 
-//Pricing strategy and Driver Matching strategy will need data
-//Even if more data is needed, only this class needs to be updated
-
+// We can add more data (if needed) here, required to make decisions of Pricing and DriverMatchign strategy
 class TripMetaData {
-	Location* srcLoc;
-	Location* dstLoc;
-	RATING riderRating;
-	RATING driverRating;
+    shared_ptr<Location> srcLoc;
+    shared_ptr<Location> dstLoc;
+    RATING riderRating;
+    RATING driverRating;
 public:
-	TripMetaData(Location* pSrcLoc, Location* pDstLoc, RATING pRiderRating) :
-		srcLoc(pSrcLoc), dstLoc(pDstLoc), riderRating(pRiderRating) {
-		driverRating = RATING::UNASSIGNED;
-	}
-	//getters and setters should be in cpp guys, I am just lazy to that
-	RATING getRiderRating() {
-		return riderRating;
-	}
-	RATING getDriverRating() {
-		return driverRating;
-	}
-	void setDriverRating(RATING pDriverRating) {
-		driverRating = pDriverRating;
-	}
+    TripMetaData(shared_ptr<Location> pSrcLoc, shared_ptr<Location> pDstLoc, RATING pRiderRating) :
+            srcLoc(std::move(pSrcLoc)), dstLoc(std::move(pDstLoc)), riderRating(pRiderRating), driverRating(RATING::UNASSIGNED) {}
+
+    RATING getRiderRating() const {
+        return riderRating;
+    }
+
+    RATING getDriverRating() const {
+        return driverRating;
+    }
+
+    void setDriverRating(RATING pDriverRating) {
+        driverRating = pDriverRating;
+    }
+
+    virtual ~TripMetaData() = default; // Added virtual destructor
 };
