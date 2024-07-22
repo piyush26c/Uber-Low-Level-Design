@@ -5,5 +5,6 @@
 
 class DriverMatchingStrategy {
 public:
-	virtual Driver* matchDriver(TripMetaData* pTripMetaData) = 0;
+    virtual shared_ptr<Driver> matchDriver(shared_ptr<TripMetaData> pTripMetaData) = 0;
+    virtual ~DriverMatchingStrategy() = default; // Added virtual destructor for proper cleanup
 };
