@@ -1,15 +1,19 @@
 #pragma once
 
 #include "rider.hpp"
-#include "mutex"
+#include <mutex>
+#include <memory>
+
+using namespace std;
 
 class RiderMgr {
-	RiderMgr(){}
-	static RiderMgr* riderMgrInstance;
-	static mutex mtx;
-	unordered_map<string, Rider*> ridersMap;
+    RiderMgr() = default; // Kept constructor private to enforce singleton pattern
+    static shared_ptr<RiderMgr> riderMgrInstance;
+    static mutex mtx;
+    unordered_map<string, shared_ptr<Rider>> ridersMap;
 public:
-	static RiderMgr* getRiderMgr();
-	void addRider(string pRiderName, Rider* pRider);
-	Rider* getRider(string pRiderName);
+    static shared_ptr<RiderMgr> getRiderMgr();
+    void addRider(const string& pRiderName, shared_ptr<Rider> pRider);
+    shared_ptr<Rider> getRider(const string& pRiderName);
+    virtual ~RiderMgr() = default; // Added virtual destructor
 };
