@@ -3,16 +3,18 @@
 
 class LeastTimeBasedMatchingStrategy : public DriverMatchingStrategy {
 public:
-	Driver* matchDriver(TripMetaData* pMetaData) {
-		DriverMgr* driverMgr = DriverMgr::getDriverMgr();
+    shared_ptr<Driver> matchDriver(shared_ptr<TripMetaData> pMetaData) override {
+        auto driverMgr = DriverMgr::getDriverMgr();
 
-		if ((driverMgr->getDriversMap()).size() == 0) {
-			cout << "No drivers! What service is this huh?" << endl;
-		}
-		cout << "Using quadtree to see nearest cabs, using driver manager to get details of drivers and send notifications" << endl;
-		Driver* driver = ((driverMgr->getDriversMap()).begin())->second; //here we can call quadtree algo to get nearest cabs
-		cout << "Setting " << driver->getDriverName() << " as driver" << endl;
-		pMetaData->setDriverRating(driver->getRating());
-		return driver;
-	}
+        if (driverMgr->getDriversMap().empty()) {
+            cout << "No drivers! What service is this huh?" << endl;
+            return nullptr; // Safety first :)
+        }
+        cout << "Using quadtree to see nearest cabs, using driver manager to get details of drivers and send notifications" << endl;
+        auto driver = driverMgr->getDriversMap().begin()->second; // Here we can call [particular] algo to get nearest cabs
+        cout << "Setting " << driver->getDriverName() << " as driver" << endl;
+        pMetaData->setDriverRating(driver->getRating());
+        return driver;
+    }
+    virtual ~LeastTimeBasedMatchingStrategy() = default; // Added virtual destructor
 };
