@@ -11,7 +11,7 @@ Class Diagram
   .diagram {
     width: 100%;
     max-width: 1200px;
-    height: auto;
+    height: 100%;
   }
 </style>
 
