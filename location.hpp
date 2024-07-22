@@ -2,7 +2,8 @@
 
 class Location {
 public:
-	double latitude;
-	double longitude;
-	Location(double pLatitude, double pLongitude) : latitude(pLatitude), longitude(pLongitude) {}
+    double latitude;
+    double longitude;
+    Location(double pLatitude, double pLongitude) : latitude(pLatitude), longitude(pLongitude) {}
+    virtual ~Location() = default; // Added virtual destructor for jabardast cleanup :)
 };
